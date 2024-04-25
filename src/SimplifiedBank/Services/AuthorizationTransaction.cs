@@ -18,16 +18,15 @@ namespace SimplifiedBank.Services
         public async Task<bool> Authorization(Account account)
         {
             var response = await http.GetAsync(http.BaseAddress);
+            string valueString = string.Empty;
             if (response.StatusCode == System.Net.HttpStatusCode.OK)
             {
                 var message = await response.Content.ReadAsStringAsync();
                 var json = JsonObject.Parse(message);
-                string valueString = json["message"].ToString();
-
-                var IsAthorized = valueString.Equals("Autorizado");
-                return IsAthorized;
+                valueString = json["message"].ToString();
             }
-            throw new UnauthorizedAccessException();
+            var IsAthorized = valueString.Equals("Autorizado");
+            return IsAthorized;
         }
     }
 }
