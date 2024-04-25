@@ -2,7 +2,6 @@
 using SimplifiedBank.Application.DTOs;
 using SimplifiedBank.Domain.Repositories;
 using SimplifiedBank.Infrastructure.Repositories;
-using SimplifiedBank.Infrastructure.Repositories.AccountsRepositories;
 using SimplifiedBank.Services.Repositories;
 using SimplifiedBank.Interfaces.Exceptions;
 using SimplifiedBank.Application.DTOs.Response;
@@ -38,8 +37,7 @@ namespace SimplifiedBank.Application.UseCases
             var newTransaction = new Domain.Entities.Transaction(data.Value, data.IdSender, data.IdReceiver);
             await _transactionRepository.CreateTransaction(newTransaction);
 
-            return new TransactionCreationResponseData(newTransaction.IdSender, accountSender.Balance
-            , newTransaction.IdReceiver, accountReceiver.Balance);
+            return new TransactionCreationResponseData(newTransaction.IdSender, newTransaction.IdReceiver);
             // Chamar serviço notificador
         }
         private void UserBalanceIsSufficient(Account accountSender, decimal value)

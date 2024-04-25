@@ -22,7 +22,7 @@ namespace SimplifiedBank.Services
             {
                 var message = await response.Content.ReadAsStringAsync();
                 var json = JsonObject.Parse(message);
-                var valueString = json["message"].ToString();
+                string valueString = json["message"].ToString();
 
                 var IsAthorized = valueString.Equals("Autorizado");
                 return IsAthorized;

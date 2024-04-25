@@ -1,12 +1,7 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http.HttpResults;
+
 using Microsoft.AspNetCore.Mvc;
 using SimplifiedBank.Application.DTOs;
 using SimplifiedBank.Application.DTOs.Response;
-using SimplifiedBank.Application.UseCases;
 using SimplifiedBank.Domain.Repositories;
 using SimplifiedBank.Interfaces.Exceptions;
 
@@ -16,7 +11,19 @@ namespace SimplifiedBank.Interfaces.Routes
     {
         public static void MapEndpoints(this WebApplication app)
         {
-            app.MapGet("", () => new { hello = "World" });
+            app.MapGet("/get/{id}", async (int id, [FromServices] IReturnAccount _returnAccount) =>
+            {
+                try
+                {
+                    var account = await _returnAccount.GetAccount(id);
+                    var viewAccount = new GetAccountData(account.Id, account.FullName, account.Balance);
+                    return Results.Ok(viewAccount);
+                }
+                catch (UserNotFoundException)
+                {
+                    return Results.NotFound();
+                }
+            });
 
             app.MapPost("/post", async ([FromServices] ICreateTransaction _createTransaction,
             [FromBody] TransactioCreationData data) =>

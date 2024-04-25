@@ -5,5 +5,5 @@ using System.Threading.Tasks;
 
 namespace SimplifiedBank.Application.DTOs.Response
 {
-    public record TransactionCreationResponseData(int IdSender, int IdReceiver);
+    public record GetAccountData(int Id, string FullName, decimal Balance);
 }
