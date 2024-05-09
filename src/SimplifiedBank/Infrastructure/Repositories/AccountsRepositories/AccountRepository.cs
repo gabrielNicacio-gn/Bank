@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using SimplifiedBank.Domain.Entities;
 using SimplifiedBank.Infrastructure.Data;
+using SimplifiedBank.Interfaces.Exceptions;
 
 namespace SimplifiedBank.Infrastructure.Repositories.AccountsRepositories
 {
@@ -19,7 +20,7 @@ namespace SimplifiedBank.Infrastructure.Repositories.AccountsRepositories
         {
             var account = await _bankContext.Accounts
             .Where(ac => ac.Id.Equals(id))
-            .SingleOrDefaultAsync();
+            .SingleOrDefaultAsync().ConfigureAwait(false);
             return account;
         }
     }

@@ -4,7 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using SimplifiedBank.Domain.Entities;
 
-namespace SimplifiedBank.Infrastructure.Repositories
+namespace SimplifiedBank.Infrastructure.Repositories.TransactionRepositories
 {
     public interface ITransactionRepository
     {

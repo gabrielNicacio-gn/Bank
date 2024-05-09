@@ -1,8 +1,12 @@
 
+using System.Security.Claims;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using SimplifiedBank.Application.DTOs;
+using SimplifiedBank.Application.Authentication;
+using SimplifiedBank.Application.DTOs.Login;
+using SimplifiedBank.Application.DTOs.Request;
 using SimplifiedBank.Application.DTOs.Response;
-using SimplifiedBank.Domain.Repositories;
+using SimplifiedBank.Domain.Interface;
 using SimplifiedBank.Interfaces.Exceptions;
 
 namespace SimplifiedBank.Interfaces.Routes
@@ -11,7 +15,20 @@ namespace SimplifiedBank.Interfaces.Routes
     {
         public static void MapEndpoints(this WebApplication app)
         {
-            app.MapGet("/get/{id}", async (int id, [FromServices] IReturnAccount _returnAccount) =>
+            var endpoints = app.MapGroup("/bank").WithTags("Bank");
+
+
+            endpoints.MapGet("/token", ([FromServices] IConfiguration _config, [FromServices] TokenService _token, string email, string password) =>
+            {
+                var login = new LoginDTO(email, password);
+                var newToken = _token.GenerateToken(login, _config);
+                if (newToken is null)
+                    return Results.BadRequest("Falha ao gerar token");
+
+                return Results.Ok(newToken);
+            });
+
+            endpoints.MapGet("/{id}/account", async ([FromRoute] int id, [FromServices] IReturnAccount _returnAccount) =>
             {
                 try
                 {
@@ -25,7 +42,7 @@ namespace SimplifiedBank.Interfaces.Routes
                 }
             });
 
-            app.MapPost("/post", async ([FromServices] ICreateTransaction _createTransaction,
+            endpoints.MapPost("/transaction", async ([FromServices] ICreateTransaction _createTransaction,
             [FromBody] TransactioCreationData data) =>
             {
                 try
@@ -37,15 +54,15 @@ namespace SimplifiedBank.Interfaces.Routes
                 {
                     return Results.NotFound();
                 }
-                catch (UnauthorizedTransactionException)
+                catch (InvalidTransactionException)
                 {
-                    return Results.Unauthorized();
+                    return Results.BadRequest();
                 }
                 catch (InsufficienteBalanceException)
                 {
                     return Results.UnprocessableEntity();
                 }
-            });
+            }).RequireAuthorization();
         }
     }
 }

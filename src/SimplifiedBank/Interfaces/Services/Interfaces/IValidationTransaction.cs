@@ -4,10 +4,10 @@ using System.Linq;
 using System.Threading.Tasks;
 using SimplifiedBank.Domain.Entities;
 
-namespace SimplifiedBank.Services.Repositories
+namespace SimplifiedBank.Services.Interfaces
 {
-    public interface IAuthorizationTransaction
+    public interface IValidationTransaction
     {
-        Task<bool> Authorization(Account account);
+        Task<bool> Validation();
     }
 }

@@ -3,7 +3,5 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace SimplifiedBank.Application.DTOs
-{
-    public record TransactioCreationData(int IdReceiver, int IdSender, decimal Value);
-}
+namespace SimplifiedBank.Application.DTOs.Request;
+public record TransactioCreationData(int IdSender, int IdReceiver, decimal Value);

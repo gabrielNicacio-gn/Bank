@@ -1,7 +1,7 @@
 
 using SimplifiedBank.Domain.Entities;
 
-namespace SimplifiedBank.Domain.Repositories;
+namespace SimplifiedBank.Domain.Interface;
 
 public interface IReturnAccount
 {
