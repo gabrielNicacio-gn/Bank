@@ -1,6 +1,9 @@
-src/SimplifiedBank/bin
-src/SimplifiedBank/obj
-.vscode/
+# Ignore build output directories
+bin/
+obj/
 
-tests/SimplifiedBank/bin
-tests/SimplifiedBank/obj
+# Ignore test build output (same as above)
+tests/bin/
+tests/obj/
+
+.vscode
