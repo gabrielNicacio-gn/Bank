@@ -1,43 +1,38 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+
 using Repositories = SimplifiedBank.Infrastructure.Repositories;
 using DataDTOs = SimplifiedBank.Application.DTOs;
 using SimplifiedBank.Interfaces.Exceptions;
 using SimplifiedBank.Domain.Entities;
-using Microsoft.VisualBasic;
-using System.Threading.Tasks.Dataflow;
-using Microsoft.AspNetCore.Mvc.ActionConstraints;
-using Microsoft.OpenApi.Validations;
+using Microsoft.EntityFrameworkCore.ChangeTracking.Internal;
 
 namespace SimplifiedBank.Application.Services;
-public class TransactionsServices
+public class TransactionsServices : ITransactionsServices
 {
     private readonly Repositories::AccountsRepositories.IAccountRepositories _accountRepository;
     public TransactionsServices(Repositories::AccountsRepositories.IAccountRepositories accountRepository)
     {
         _accountRepository = accountRepository;
     }
-    public async Task Validation(DataDTOs::Request.TransactioCreationData data, decimal value)
+    public async Task ValidateTransaction(DataDTOs::Request.TransactionCreationData data)
     {
-        await ExistAccounts(data, value).ConfigureAwait(false);
+        var account = await CheckAccountsExistence(data).ConfigureAwait(false);
+        var sender = account.First(ac => ac.Id == data.IdSender);
+        CheckIfTheBalanceIsSufficient(sender, data.Value);
     }
-    private void IsBalanceSufficient(Account account, decimal Value)
+    private void CheckIfTheBalanceIsSufficient(Account account, decimal Value)
     {
         if (account.Balance < Value)
             throw new InsufficienteBalanceException("Saldo Insuficiente");
     }
-    private async Task ExistAccounts(DataDTOs::Request.TransactioCreationData data, decimal value)
+    private async Task<Account[]> CheckAccountsExistence(DataDTOs::Request.TransactionCreationData data)
     {
-        var sender = await _accountRepository.GetAccount(data.IdSender).ConfigureAwait(false);
-        var receiver = await _accountRepository.GetAccount(data.IdReceiver).ConfigureAwait(false);
+        var taskSender = await _accountRepository.GetAccountById(data.IdSender);
+        var taskReceiver = await _accountRepository.GetAccountById(data.IdReceiver);
 
-        if (sender is null || receiver is null)
-            throw new UserNotFoundException("Conta(s) não encontrada(s)");
+        if (taskSender is null || taskReceiver is null)
+            throw new UserNotFoundException("Contas não encontradas");
 
-        IsBalanceSufficient(sender, value);
+        return [taskSender, taskReceiver];
     }
-
 }
 

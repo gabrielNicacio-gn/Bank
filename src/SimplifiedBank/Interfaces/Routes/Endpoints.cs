@@ -17,11 +17,12 @@ namespace SimplifiedBank.Interfaces.Routes
         {
             var endpoints = app.MapGroup("/bank").WithTags("Bank");
 
-
-            endpoints.MapGet("/token", ([FromServices] IConfiguration _config, [FromServices] TokenService _token, string email, string password) =>
+            endpoints.MapPost("/login", [AllowAnonymous] async ([FromServices] IConfiguration _config, [FromServices] TokenService _token,
+            string email,
+            string password) =>
             {
-                var login = new LoginDTO(email, password);
-                var newToken = _token.GenerateToken(login, _config);
+                LoginDTO login = new LoginDTO(email, password);
+                var newToken = await _token.GenerateToken(login, _config);
                 if (newToken is null)
                     return Results.BadRequest("Falha ao gerar token");
 
@@ -33,34 +34,33 @@ namespace SimplifiedBank.Interfaces.Routes
                 try
                 {
                     var account = await _returnAccount.GetAccount(id);
-                    var viewAccount = new GetAccountData(account.Id, account.FullName, account.Balance);
-                    return Results.Ok(viewAccount);
+                    return Results.Ok(account);
                 }
-                catch (UserNotFoundException)
+                catch (UserNotFoundException ex)
                 {
-                    return Results.NotFound();
+                    return Results.NotFound(ex.Message);
                 }
-            });
+            }).RequireAuthorization();
 
             endpoints.MapPost("/transaction", async ([FromServices] ICreateTransaction _createTransaction,
-            [FromBody] TransactioCreationData data) =>
+            [FromBody] TransactionCreationData data) =>
             {
                 try
                 {
                     var newTransaction = await _createTransaction.Create(data);
                     return Results.Ok(newTransaction);
                 }
-                catch (UserNotFoundException)
+                catch (UserNotFoundException ex)
                 {
-                    return Results.NotFound();
+                    return Results.NotFound(ex.Message);
                 }
-                catch (InvalidTransactionException)
+                catch (InvalidTransactionException ex)
                 {
-                    return Results.BadRequest();
+                    return Results.BadRequest(ex.Message);
                 }
-                catch (InsufficienteBalanceException)
+                catch (InsufficienteBalanceException ex)
                 {
-                    return Results.UnprocessableEntity();
+                    return Results.UnprocessableEntity(ex.Message);
                 }
             }).RequireAuthorization();
         }

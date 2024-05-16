@@ -6,8 +6,8 @@ using SimplifiedBank.Domain.Entities;
 
 namespace SimplifiedBank.Services.Interfaces
 {
-    public interface IValidationTransaction
+    public interface IServiceExternalTransactionAuthorizer
     {
-        Task<bool> Validation();
+        Task<bool> Authorizer();
     }
 }

@@ -21,6 +21,5 @@ namespace SimplifiedBank.Infrastructure.Data
         => optionsBuilder.LogTo(Console.WriteLine)
         .EnableDetailedErrors()
         .EnableSensitiveDataLogging(false);
-
     }
 }

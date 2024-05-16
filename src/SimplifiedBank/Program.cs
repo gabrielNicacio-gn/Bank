@@ -12,6 +12,7 @@ using SimplifiedBank.Interfaces.Routes;
 using SimplifiedBank.Services;
 using SimplifiedBank.Services.Interfaces;
 using SimplifiedBank.Application.Services;
+using SimplifiedBank.Interfaces.Exceptions;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -21,17 +22,17 @@ builder.Services.AddSwaggerGen();
 builder.Services.AddDbContext<BankContext>(options =>
 {
     options.UseNpgsql(builder.Configuration.GetConnectionString("PostgresConnString"));
-});
+}, ServiceLifetime.Transient);
 
 builder.Services.AddScoped<ITransactionRepository, TransactionRepository>();
-builder.Services.AddScoped<IValidationTransaction, ValidationTransaction>();
-builder.Services.AddScoped<IAccountRepositories, AccountRepository>();
+builder.Services.AddScoped<IServiceExternalTransactionAuthorizer, ServiceExternalTransactionAuthorizer>();
+builder.Services.AddScoped<IAccountRepositories, AccountsRepositories>();
 builder.Services.AddScoped<ICreateTransaction, CreateTransaction>();
 builder.Services.AddScoped<IReturnAccount, ReturnAccount>();
 builder.Services.AddScoped<TokenService>();
-builder.Services.AddScoped<TransactionsServices>();
+builder.Services.AddScoped<ITransactionsServices, TransactionsServices>();
 
-var secretKey = builder.Configuration["JWT:SecretKey"] ?? throw new ArgumentException();
+var secretKey = builder.Configuration["JWT:SecretKey"] ?? throw new SecretKeyInvalidException();
 
 builder.Services.AddAuthentication(options =>
 {
@@ -55,6 +56,8 @@ builder.Services.AddAuthentication(options =>
 
 });
 
+builder.Services.AddAuthorization();
+
 var app = builder.Build();
 
 if (app.Environment.IsDevelopment())
@@ -65,6 +68,7 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 app.UseAuthentication();
+app.UseAuthorization();
 
 app.MapEndpoints();
 app.Run();

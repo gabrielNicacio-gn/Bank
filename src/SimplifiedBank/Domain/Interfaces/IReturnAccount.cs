@@ -1,9 +1,9 @@
 
-using SimplifiedBank.Domain.Entities;
+using SimplifiedBank.Application.DTOs.Response;
 
 namespace SimplifiedBank.Domain.Interface;
 
 public interface IReturnAccount
 {
-        Task<Account> GetAccount(int id);
+        Task<GetAccountData> GetAccount(int id);
 }

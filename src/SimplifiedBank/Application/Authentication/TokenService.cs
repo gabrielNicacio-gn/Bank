@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 using Microsoft.IdentityModel.Tokens;
 using SimplifiedBank.Application.DTOs.Login;
 using SimplifiedBank.Infrastructure.Repositories.AccountsRepositories;
+using SimplifiedBank.Interfaces.Exceptions;
 
 namespace SimplifiedBank.Application.Authentication
 {
@@ -19,8 +20,12 @@ namespace SimplifiedBank.Application.Authentication
             _accountRepository = accountRepository;
         }
 
-        public string GenerateToken(LoginDTO login, IConfiguration _config)
+        public async Task<string?> GenerateToken(LoginDTO login, IConfiguration _config)
         {
+            var account = await _accountRepository.ExistAccount(login.Email, login.Password);
+            if (!account)
+                throw new UserNotFoundException("Não Existe");
+
             var key = _config.GetSection("JWT").GetValue<string>("SecretKey") ??
                 throw new InvalidOperationException("Invalid Key");
 
@@ -29,21 +34,17 @@ namespace SimplifiedBank.Application.Authentication
             var singnigCredentials = new SigningCredentials(new SymmetricSecurityKey(privateKey),
              SecurityAlgorithms.HmacSha256Signature);
 
-            var generateClaims = new List<Claim> { new Claim(type: ClaimTypes.Name , login.Email),
-             new Claim(type: ClaimTypes.Name , login.Password)};
+            var generateClaims = new[] { new Claim(type: ClaimTypes.Name, login.Email) };
 
-            var tokenDescriptor = new SecurityTokenDescriptor
-            {
-                Subject = new ClaimsIdentity(generateClaims),
-                Audience = _config.GetSection("JWT").GetValue<string>("Audience"),
-                Expires = DateTime.UtcNow.AddHours(4),
-                Issuer = _config.GetSection("JWT").GetValue<string>("Issuer"),
-                SigningCredentials = singnigCredentials
-            };
+            var tokenDescriptor = new JwtSecurityToken(
+                audience: _config.GetSection("JWT").GetValue<string>("Audience"),
+                claims: generateClaims,
+                issuer: _config.GetSection("JWT").GetValue<string>("Issuer"),
+                expires: DateTime.UtcNow.AddHours(4),
+                signingCredentials: singnigCredentials);
 
             var tokenHandler = new JwtSecurityTokenHandler();
-            var token = tokenHandler.CreateJwtSecurityToken(tokenDescriptor);
-            var newToken = tokenHandler.WriteToken(token);
+            var newToken = tokenHandler.WriteToken(tokenDescriptor);
             return newToken;
         }
     }

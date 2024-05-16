@@ -1,4 +1,5 @@
 
+using SimplifiedBank.Application.DTOs.Response;
 using SimplifiedBank.Domain.Entities;
 using SimplifiedBank.Domain.Interface;
 using SimplifiedBank.Infrastructure.Repositories.AccountsRepositories;
@@ -14,11 +15,13 @@ public class ReturnAccount : IReturnAccount
                 _account = account;
         }
 
-        public async Task<Account> GetAccount(int id)
+        public async Task<GetAccountData> GetAccount(int id)
         {
-                var account = await _account.GetAccount(id).ConfigureAwait(false)
+                var account = await _account.GetAccountById(id).ConfigureAwait(false)
                 ?? throw new UserNotFoundException("Conta(s) não encontrada(s)");
 
-                return account;
+                var viewAccount = new GetAccountData(account.Id, account.FullName, account.Balance);
+
+                return viewAccount;
         }
 }

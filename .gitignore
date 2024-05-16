@@ -1,3 +1,6 @@
 src/SimplifiedBank/bin
 src/SimplifiedBank/obj
 .vscode/
+
+tests/SimplifiedBank/bin
+tests/SimplifiedBank/obj

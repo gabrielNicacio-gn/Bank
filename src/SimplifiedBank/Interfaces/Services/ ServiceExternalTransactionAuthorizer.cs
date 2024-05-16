@@ -9,13 +9,13 @@ using SimplifiedBank.Services.Interfaces;
 
 namespace SimplifiedBank.Services
 {
-    public class ValidationTransaction : IValidationTransaction
+    public class ServiceExternalTransactionAuthorizer : IServiceExternalTransactionAuthorizer
     {
         private HttpClient http = new()
         {
             BaseAddress = new Uri("https://run.mocky.io/v3/5794d450-d2e2-4412-8131-73d0293ac1cc")
         };
-        public async Task<bool> Validation()
+        public async Task<bool> Authorizer()
         {
             var response = await http.GetAsync(http.BaseAddress).ConfigureAwait(false);
             string valueString = string.Empty;

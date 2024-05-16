@@ -8,6 +8,6 @@ namespace SimplifiedBank.Domain.Interface
 {
     public interface ICreateTransaction
     {
-        Task<DataDTOs::Response.TransactionCreationResponseData> Create(DataDTOs::Request.TransactioCreationData data);
+        Task<DataDTOs::Response.ResponseDataForTransactionCreation> Create(DataDTOs::Request.TransactionCreationData data);
     }
 }
