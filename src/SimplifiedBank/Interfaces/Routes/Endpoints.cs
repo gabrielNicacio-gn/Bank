@@ -40,7 +40,7 @@ namespace SimplifiedBank.Interfaces.Routes
                 {
                     return Results.NotFound(ex.Message);
                 }
-            }).RequireAuthorization();
+            });//.RequireAuthorization();
 
             endpoints.MapPost("/transaction", async ([FromServices] ICreateTransaction _createTransaction,
             [FromBody] TransactionCreationData data) =>
@@ -62,7 +62,7 @@ namespace SimplifiedBank.Interfaces.Routes
                 {
                     return Results.UnprocessableEntity(ex.Message);
                 }
-            }).RequireAuthorization();
+            });//.RequireAuthorization();
         }
     }
 }

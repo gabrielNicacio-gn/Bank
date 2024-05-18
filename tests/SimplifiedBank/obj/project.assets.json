@@ -7139,11 +7139,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "/home/nicacio/Dev/SimplifiedBank/tests/SimplifiedBank/SimplifiedBankTest.csproj",
+      "projectUniqueName": "/home/nicacio/Dev/Bank/tests/SimplifiedBank/SimplifiedBankTest.csproj",
       "projectName": "SimplifiedBankTest",
-      "projectPath": "/home/nicacio/Dev/SimplifiedBank/tests/SimplifiedBank/SimplifiedBankTest.csproj",
+      "projectPath": "/home/nicacio/Dev/Bank/tests/SimplifiedBank/SimplifiedBankTest.csproj",
       "packagesPath": "/home/nicacio/.nuget/packages/",
-      "outputPath": "/home/nicacio/Dev/SimplifiedBank/tests/SimplifiedBank/obj/",
+      "outputPath": "/home/nicacio/Dev/Bank/tests/SimplifiedBank/obj/",
       "projectStyle": "PackageReference",
       "configFilePaths": [
         "/home/nicacio/.nuget/NuGet/NuGet.Config"
@@ -7158,8 +7158,8 @@
         "net8.0": {
           "targetAlias": "net8.0",
           "projectReferences": {
-            "/home/nicacio/Dev/SimplifiedBank/src/SimplifiedBank/SimplifiedBank.csproj": {
-              "projectPath": "/home/nicacio/Dev/SimplifiedBank/src/SimplifiedBank/SimplifiedBank.csproj"
+            "/home/nicacio/Dev/Bank/src/SimplifiedBank/SimplifiedBank.csproj": {
+              "projectPath": "/home/nicacio/Dev/Bank/src/SimplifiedBank/SimplifiedBank.csproj"
             }
           }
         }
@@ -7213,7 +7213,7 @@
         "downloadDependencies": [
           {
             "name": "Microsoft.AspNetCore.App.Ref",
-            "version": "[8.0.2, 8.0.2]"
+            "version": "[8.0.4, 8.0.4]"
           }
         ],
         "frameworkReferences": {
@@ -7221,7 +7221,7 @@
             "privateAssets": "all"
           }
         },
-        "runtimeIdentifierGraphPath": "/usr/share/dotnet/sdk/8.0.102/PortableRuntimeIdentifierGraph.json"
+        "runtimeIdentifierGraphPath": "/usr/share/dotnet/sdk/8.0.104/PortableRuntimeIdentifierGraph.json"
       }
     }
   }

@@ -26,13 +26,26 @@ public class TransactionsServices : ITransactionsServices
     }
     private async Task<Account[]> CheckAccountsExistence(DataDTOs::Request.TransactionCreationData data)
     {
-        var taskSender = await _accountRepository.GetAccountById(data.IdSender);
-        var taskReceiver = await _accountRepository.GetAccountById(data.IdReceiver);
+        var taskSender = _accountRepository.GetAccountById(data.IdSender);
+        var taskReceiver = _accountRepository.GetAccountById(data.IdReceiver);
 
-        if (taskSender is null || taskReceiver is null)
-            throw new UserNotFoundException("Contas não encontradas");
+        Account[] accounts = new Account[2];
 
-        return [taskSender, taskReceiver];
+        var currentAccount = await Task.WhenAny([taskSender, taskReceiver]).ConfigureAwait(false)
+        ?? throw new UserNotFoundException("Conta(s) não encontrada(ss)");
+
+        if (currentAccount == taskSender)
+        {
+            var sender = await taskSender.ConfigureAwait(false);
+            accounts[0] = sender!;
+        }
+        else
+        {
+            var receiver = await taskReceiver.ConfigureAwait(false);
+            accounts[1] = receiver!;
+        }
+
+        return accounts;
     }
 }
 
