@@ -10,15 +10,15 @@ namespace SimplifiedBank.Domain.Entities
     public class Transaction
     {
         [Column("id")]
-        public int Id { get; set; }
+        public int Id { get; private set; }
         [Column("id_sender")]
-        public int IdSender { get; set; }
+        public int IdSender { get; private set; }
         [Column("id_receiver")]
-        public int IdReceiver { get; set; }
+        public int IdReceiver { get; private set; }
         [Column("value")]
-        public decimal Value { get; set; }
+        public decimal Value { get; private set; }
         [Column("date")]
-        public DateTime HourOfTransaction { get; set; }
+        public DateTime HourOfTransaction { get; private set; }
         public Transaction(decimal value, int idSender, int idReceiver)
         {
             IdSender = idSender;

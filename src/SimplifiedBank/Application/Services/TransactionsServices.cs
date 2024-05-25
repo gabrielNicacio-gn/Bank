@@ -3,7 +3,6 @@ using Repositories = SimplifiedBank.Infrastructure.Repositories;
 using DataDTOs = SimplifiedBank.Application.DTOs;
 using SimplifiedBank.Interfaces.Exceptions;
 using SimplifiedBank.Domain.Entities;
-using Microsoft.EntityFrameworkCore.ChangeTracking.Internal;
 
 namespace SimplifiedBank.Application.Services;
 public class TransactionsServices : ITransactionsServices
@@ -32,7 +31,7 @@ public class TransactionsServices : ITransactionsServices
         Account[] accounts = new Account[2];
 
         var currentAccount = await Task.WhenAny([taskSender, taskReceiver]).ConfigureAwait(false)
-        ?? throw new UserNotFoundException("Conta(s) não encontrada(ss)");
+        ?? throw new UserNotFoundException("Conta(s) não encontrada(s)");
 
         if (currentAccount == taskSender)
         {

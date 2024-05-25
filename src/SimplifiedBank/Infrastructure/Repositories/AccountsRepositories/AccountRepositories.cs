@@ -14,7 +14,6 @@ public class AccountsRepositories : IAccountRepositories
     }
     public async Task<Account?> GetAccountById(int id)
     {
-
         slim.Wait();
 
         var account = await _bankContext.Accounts
@@ -23,7 +22,6 @@ public class AccountsRepositories : IAccountRepositories
 
         slim.Release();
         return account;
-
     }
 
     public async Task<bool> ExistAccount(string email, string password)

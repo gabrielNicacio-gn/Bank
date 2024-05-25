@@ -13,6 +13,7 @@ using SimplifiedBank.Services;
 using SimplifiedBank.Services.Interfaces;
 using SimplifiedBank.Application.Services;
 using SimplifiedBank.Interfaces.Exceptions;
+using SimplifiedBank.Domain.Interfaces;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -31,6 +32,7 @@ builder.Services.AddScoped<ICreateTransaction, CreateTransaction>();
 builder.Services.AddScoped<IReturnAccount, ReturnAccount>();
 builder.Services.AddScoped<TokenService>();
 builder.Services.AddScoped<ITransactionsServices, TransactionsServices>();
+builder.Services.AddScoped<IReturnsTheLatestTransactions, ReturnsTheLatestTransactions>();
 
 var secretKey = builder.Configuration["JWT:SecretKey"] ?? throw new SecretKeyInvalidException();
 
@@ -70,6 +72,7 @@ app.UseHttpsRedirection();
 app.UseAuthentication();
 app.UseAuthorization();
 
-app.MapEndpoints();
+app.MapTransactionEndpoints();
+app.MapAccountEndpoints();
 app.Run();
 

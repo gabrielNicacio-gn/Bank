@@ -24,13 +24,13 @@ public class CreateTransaction : ICreateTransaction
     public async Task<DataDTOs::Response.ResponseDataForTransactionCreation> Create(DataDTOs::Request.TransactionCreationData data)
     {
         await _transactionServices.ValidateTransaction(data);
-        // await ValidateExternal();
+        await ValidateExternal();
         var newTransaction = new Entities::Transaction(data.Value, data.IdSender, data.IdReceiver);
         await _transactionRepository.CreateTransaction(newTransaction).ConfigureAwait(false);
 
         var newTransactionResult = new DataDTOs::Response.ResponseDataForTransactionCreation(newTransaction.IdSender, newTransaction.IdReceiver, newTransaction.Value);
         return newTransactionResult;
-        // Chamar serviço notificador
+
     }
     private async Task<bool> ValidateExternal()
     {

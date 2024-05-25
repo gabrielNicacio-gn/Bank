@@ -13,7 +13,7 @@ namespace SimplifiedBank.Services
     {
         private HttpClient http = new()
         {
-            BaseAddress = new Uri("https://run.mocky.io/v3/5794d450-d2e2-4412-8131-73d0293ac1cc")
+            BaseAddress = new Uri("http://localhost:3000/transaction/validate")
         };
         public async Task<bool> Authorizer()
         {

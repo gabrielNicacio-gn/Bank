@@ -22,12 +22,21 @@ public class TransactionRepository : ITransactionRepository
             await _bankContext.Transactions.AddAsync(transaction);
             await _bankContext.Accounts
             .Where(ac => ac.Id == transaction.IdSender)
-            .ExecuteUpdateAsync(ac => ac.SetProperty(b => b.Balance, b => b.Balance - transaction.Value)).ConfigureAwait(false);
+            .ExecuteUpdateAsync(ac => ac.SetProperty(b => b.Balance, b => b.Balance - transaction.Value));
             await _bankContext.Accounts
             .Where(ac => ac.Id == transaction.IdReceiver)
-            .ExecuteUpdateAsync(ac => ac.SetProperty(b => b.Balance, b => b.Balance + transaction.Value)).ConfigureAwait(false);
+            .ExecuteUpdateAsync(ac => ac.SetProperty(b => b.Balance, b => b.Balance + transaction.Value));
             _bankContext.SaveChanges();
             begin.Commit();
         }
+    }
+
+    public async Task<IEnumerable<Transaction>> GetLatestTransaction(int idAccount)
+    {
+        var listAccount = await _bankContext.Transactions
+        .Where(tr => tr.IdSender == idAccount || tr.IdReceiver == idAccount)
+        .OrderBy(tr => tr.HourOfTransaction)
+        .ToListAsync().ConfigureAwait(false);
+        return listAccount.AsEnumerable();
     }
 }
