@@ -20,9 +20,9 @@ namespace SimplifiedBank.Application.Authentication
             _accountRepository = accountRepository;
         }
 
-        public async Task<string?> GenerateToken(LoginDTO login, IConfiguration _config)
+        public string? GenerateToken(LoginDTO login, IConfiguration _config)
         {
-            var account = await _accountRepository.ExistAccount(login.Email, login.Password);
+            var account = _accountRepository.ExistAccount(login.Email, login.Password);
             if (!account)
                 throw new UserNotFoundException("Não Existe");
 

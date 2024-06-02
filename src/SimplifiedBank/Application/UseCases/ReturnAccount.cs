@@ -15,9 +15,9 @@ public class ReturnAccount : IReturnAccount
                 _account = account;
         }
 
-        public async Task<GetAccountData> GetAccount(int id)
+        public GetAccountData GetAccount(int id)
         {
-                var account = await _account.GetAccountById(id).ConfigureAwait(false)
+                var account = _account.GetAccountById(id)
                 ?? throw new UserNotFoundException("Conta(s) não encontrada(s)");
 
                 var viewAccount = new GetAccountData(account.Id, account.FullName, account.Balance);

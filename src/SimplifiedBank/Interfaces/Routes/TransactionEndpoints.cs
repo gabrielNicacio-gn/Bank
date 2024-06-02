@@ -6,6 +6,7 @@ using SimplifiedBank.Application.Authentication;
 using SimplifiedBank.Application.DTOs.Login;
 using SimplifiedBank.Application.DTOs.Request;
 using SimplifiedBank.Application.DTOs.Response;
+using SimplifiedBank.Application.UseCases;
 using SimplifiedBank.Domain.Interface;
 using SimplifiedBank.Domain.Interfaces;
 using SimplifiedBank.Interfaces.Exceptions;
@@ -18,11 +19,11 @@ namespace SimplifiedBank.Interfaces.Routes
         {
             var endpoints = app.MapGroup("/bank").WithTags("Bank");
 
-            endpoints.MapPost("/transaction", async ([FromBody] TransactionCreationData data, [FromServices] ICreateTransaction _create) =>
+            endpoints.MapPost("/transaction", ([FromBody] TransactionCreationData data, [FromServices] ICreateTransaction _create) =>
             {
                 try
                 {
-                    var created = await _create.Create(data);
+                    var created = _create.Create(data);
                     return Results.Created<ResponseDataForTransactionCreation>("", created);
                 }
                 catch (UserNotFoundException ex)
@@ -39,11 +40,11 @@ namespace SimplifiedBank.Interfaces.Routes
                 }
             }).RequireAuthorization();
 
-            endpoints.MapGet("{id}/latest", async ([FromRoute] int id, [FromServices] IReturnsTheLatestTransactions _latestTransaction) =>
+            endpoints.MapGet("{id}/latest", ([FromRoute] int id, [FromServices] IReturnTheLatestTransactions _latestTransaction) =>
             {
                 try
                 {
-                    var list = await _latestTransaction.GetList(id);
+                    var list = _latestTransaction.GetList(id);
                     return Results.Ok(list);
                 }
                 catch

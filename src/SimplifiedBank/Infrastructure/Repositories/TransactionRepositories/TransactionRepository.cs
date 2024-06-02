@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using SimplifiedBank.Domain.Entities;
+using SimplifiedBank.Extensions;
 using SimplifiedBank.Infrastructure.Data;
 
 namespace SimplifiedBank.Infrastructure.Repositories.TransactionRepositories;
@@ -15,28 +16,29 @@ public class TransactionRepository : ITransactionRepository
     {
         _bankContext = bankContext;
     }
-    public async Task CreateTransaction(Transaction transaction)
+    public void CreateTransaction(Transaction transaction)
     {
         using (var begin = _bankContext.Database.BeginTransaction())
         {
-            await _bankContext.Transactions.AddAsync(transaction);
-            await _bankContext.Accounts
+            _bankContext.Transactions.AddAsync(transaction);
+            _bankContext.Accounts
             .Where(ac => ac.Id == transaction.IdSender)
-            .ExecuteUpdateAsync(ac => ac.SetProperty(b => b.Balance, b => b.Balance - transaction.Value));
-            await _bankContext.Accounts
+            .ExecuteUpdate(ac => ac.SetProperty(b => b.Balance, b => b.Balance - transaction.Value));
+            _bankContext.Accounts
             .Where(ac => ac.Id == transaction.IdReceiver)
-            .ExecuteUpdateAsync(ac => ac.SetProperty(b => b.Balance, b => b.Balance + transaction.Value));
+            .ExecuteUpdate(ac => ac.SetProperty(b => b.Balance, b => b.Balance + transaction.Value));
             _bankContext.SaveChanges();
             begin.Commit();
         }
     }
 
-    public async Task<IEnumerable<Transaction>> GetLatestTransaction(int idAccount)
+    public IEnumerable<Transaction> GetLatestTransaction(int idAccount)
     {
-        var listAccount = await _bankContext.Transactions
+        var listAccount = _bankContext.Transactions
         .Where(tr => tr.IdSender == idAccount || tr.IdReceiver == idAccount)
-        .OrderBy(tr => tr.HourOfTransaction)
-        .ToListAsync().ConfigureAwait(false);
+        .OrderByDescending(tr => tr.HourOfTransaction)
+        .AsNoTracking()
+        .ToList();
         return listAccount.AsEnumerable();
     }
 }

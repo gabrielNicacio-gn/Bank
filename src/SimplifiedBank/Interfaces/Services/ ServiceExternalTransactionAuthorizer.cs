@@ -17,7 +17,7 @@ namespace SimplifiedBank.Services
         };
         public async Task<bool> Authorizer()
         {
-            var response = await http.GetAsync(http.BaseAddress).ConfigureAwait(false);
+            var response = await http.GetAsync(http.BaseAddress);
             string valueString = string.Empty;
             if (response.StatusCode == System.Net.HttpStatusCode.OK)
             {

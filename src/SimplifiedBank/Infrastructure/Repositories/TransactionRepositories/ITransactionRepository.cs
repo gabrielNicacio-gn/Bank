@@ -8,7 +8,7 @@ namespace SimplifiedBank.Infrastructure.Repositories.TransactionRepositories
 {
     public interface ITransactionRepository
     {
-        Task CreateTransaction(Transaction transaction);
-        Task<IEnumerable<Transaction>> GetLatestTransaction(int id);
+        void CreateTransaction(Transaction transaction);
+        IEnumerable<Transaction> GetLatestTransaction(int id);
     }
 }

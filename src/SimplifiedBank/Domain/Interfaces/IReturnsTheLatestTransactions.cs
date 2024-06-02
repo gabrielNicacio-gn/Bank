@@ -6,8 +6,8 @@ using SimplifiedBank.Application.DTOs.Response;
 
 namespace SimplifiedBank.Domain.Interfaces
 {
-    public interface IReturnsTheLatestTransactions
+    public interface IReturnTheLatestTransactions
     {
-        Task<IEnumerable<GetLatestTransactions>> GetList(int id);
+        IEnumerable<GetLatestTransactions> GetList(int id);
     }
 }

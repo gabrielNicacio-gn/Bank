@@ -12,39 +12,23 @@ public class TransactionsServices : ITransactionsServices
     {
         _accountRepository = accountRepository;
     }
-    public async Task ValidateTransaction(DataDTOs::Request.TransactionCreationData data)
+    public void ValidateTransaction(DataDTOs::Request.TransactionCreationData data)
     {
-        var account = await CheckAccountsExistence(data).ConfigureAwait(false);
-        var sender = account.First(ac => ac.Id == data.IdSender);
-        CheckIfTheBalanceIsSufficient(sender, data.Value);
+        var account = CheckAccountsExistence(data.IdSender);
+        CheckAccountsExistence(data.IdReceiver);
+        CheckIfTheBalanceIsSufficient(account, data.Value);
     }
     private void CheckIfTheBalanceIsSufficient(Account account, decimal Value)
     {
         if (account.Balance < Value)
             throw new InsufficienteBalanceException("Saldo Insuficiente");
     }
-    private async Task<Account[]> CheckAccountsExistence(DataDTOs::Request.TransactionCreationData data)
+    private Account CheckAccountsExistence(int accountId)
     {
-        var taskSender = _accountRepository.GetAccountById(data.IdSender);
-        var taskReceiver = _accountRepository.GetAccountById(data.IdReceiver);
-
-        Account[] accounts = new Account[2];
-
-        var currentAccount = await Task.WhenAny([taskSender, taskReceiver]).ConfigureAwait(false)
+        var taskSender = _accountRepository.GetAccountById(accountId)
         ?? throw new UserNotFoundException("Conta(s) não encontrada(s)");
 
-        if (currentAccount == taskSender)
-        {
-            var sender = await taskSender.ConfigureAwait(false);
-            accounts[0] = sender!;
-        }
-        else
-        {
-            var receiver = await taskReceiver.ConfigureAwait(false);
-            accounts[1] = receiver!;
-        }
-
-        return accounts;
+        return taskSender;
     }
 }
 

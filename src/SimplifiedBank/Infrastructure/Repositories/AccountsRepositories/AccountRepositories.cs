@@ -7,27 +7,22 @@ namespace SimplifiedBank.Infrastructure.Repositories.AccountsRepositories;
 public class AccountsRepositories : IAccountRepositories
 {
     private readonly BankContext _bankContext;
-    SemaphoreSlim slim = new SemaphoreSlim(1);
     public AccountsRepositories(BankContext bankContext)
     {
         _bankContext = bankContext;
     }
-    public async Task<Account?> GetAccountById(int id)
+    public Account? GetAccountById(int id)
     {
-        slim.Wait();
-
-        var account = await _bankContext.Accounts
+        var account = _bankContext.Accounts
         .Where(ac => ac.Id.Equals(id))
-        .FirstOrDefaultAsync().ConfigureAwait(false);
-
-        slim.Release();
+        .FirstOrDefault();
         return account;
     }
 
-    public async Task<bool> ExistAccount(string email, string password)
+    public bool ExistAccount(string email, string password)
     {
-        var account = await _bankContext.Accounts
-        .AnyAsync(ac => ac.Email.Equals(email) && ac.Password.Equals(password)).ConfigureAwait(false);
+        var account = _bankContext.Accounts
+        .Any(ac => ac.Email.Equals(email) && ac.Password.Equals(password));
         return account;
     }
 }

@@ -23,7 +23,7 @@ builder.Services.AddSwaggerGen();
 builder.Services.AddDbContext<BankContext>(options =>
 {
     options.UseNpgsql(builder.Configuration.GetConnectionString("PostgresConnString"));
-}, ServiceLifetime.Transient);
+});
 
 builder.Services.AddScoped<ITransactionRepository, TransactionRepository>();
 builder.Services.AddScoped<IServiceExternalTransactionAuthorizer, ServiceExternalTransactionAuthorizer>();
@@ -32,7 +32,7 @@ builder.Services.AddScoped<ICreateTransaction, CreateTransaction>();
 builder.Services.AddScoped<IReturnAccount, ReturnAccount>();
 builder.Services.AddScoped<TokenService>();
 builder.Services.AddScoped<ITransactionsServices, TransactionsServices>();
-builder.Services.AddScoped<IReturnsTheLatestTransactions, ReturnsTheLatestTransactions>();
+builder.Services.AddScoped<IReturnTheLatestTransactions, ReturnTheLatestTransactions>();
 
 var secretKey = builder.Configuration["JWT:SecretKey"] ?? throw new SecretKeyInvalidException();
 

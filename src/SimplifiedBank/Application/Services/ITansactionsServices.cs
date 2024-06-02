@@ -9,5 +9,5 @@ namespace SimplifiedBank.Application.Services;
 
 public interface ITransactionsServices
 {
-    Task ValidateTransaction(DataDTOs::Request.TransactionCreationData data);
+    void ValidateTransaction(DataDTOs::Request.TransactionCreationData data);
 }

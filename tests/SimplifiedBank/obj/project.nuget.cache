@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "dgSpecHash": "MwkBM4v+fh7papjSplkQo/qMb4AfAVcl9aG6JG+5BA3HNKwq9y6QKPrX4elEVRljluj/oK0bc1eQcrZaPFUwpw==",
+  "dgSpecHash": "QFfNShqMltZok+VYMNsNe7AsbRu9RmqHc6FyhnuqFO4mCDcly3QN5G1HJ6iIK/WYwMavMfWN1Fg8dvG+oifXGA==",
   "success": true,
   "projectFilePath": "/home/nicacio/Dev/Bank/tests/SimplifiedBank/SimplifiedBankTest.csproj",
   "expectedPackageFiles": [
@@ -126,7 +126,7 @@
     "/home/nicacio/.nuget/packages/xunit.extensibility.core/2.4.2/xunit.extensibility.core.2.4.2.nupkg.sha512",
     "/home/nicacio/.nuget/packages/xunit.extensibility.execution/2.4.2/xunit.extensibility.execution.2.4.2.nupkg.sha512",
     "/home/nicacio/.nuget/packages/xunit.runner.visualstudio/2.4.5/xunit.runner.visualstudio.2.4.5.nupkg.sha512",
-    "/home/nicacio/.nuget/packages/microsoft.aspnetcore.app.ref/8.0.4/microsoft.aspnetcore.app.ref.8.0.4.nupkg.sha512"
+    "/home/nicacio/.nuget/packages/microsoft.aspnetcore.app.ref/8.0.5/microsoft.aspnetcore.app.ref.8.0.5.nupkg.sha512"
   ],
   "logs": []
 }

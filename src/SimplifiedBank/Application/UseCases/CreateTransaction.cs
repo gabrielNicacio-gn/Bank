@@ -21,24 +21,23 @@ public class CreateTransaction : ICreateTransaction
         _externalAuthorizer = externalAuthorizer;
         _transactionServices = transactionServices;
     }
-    public async Task<DataDTOs::Response.ResponseDataForTransactionCreation> Create(DataDTOs::Request.TransactionCreationData data)
+    public DataDTOs::Response.ResponseDataForTransactionCreation Create(DataDTOs::Request.TransactionCreationData data)
     {
-        await _transactionServices.ValidateTransaction(data);
-        await ValidateExternal();
+        _transactionServices.ValidateTransaction(data);
+        ValidateExternal();
         var newTransaction = new Entities::Transaction(data.Value, data.IdSender, data.IdReceiver);
-        await _transactionRepository.CreateTransaction(newTransaction).ConfigureAwait(false);
+        _transactionRepository.CreateTransaction(newTransaction);
 
         var newTransactionResult = new DataDTOs::Response.ResponseDataForTransactionCreation(newTransaction.IdSender, newTransaction.IdReceiver, newTransaction.Value);
         return newTransactionResult;
+        //Notification 
 
     }
-    private async Task<bool> ValidateExternal()
+    private void ValidateExternal()
     {
-        var IsValid = await _externalAuthorizer.Authorizer().ConfigureAwait(false);
+        var IsValid = _externalAuthorizer.Authorizer().Result;
 
         if (!IsValid)
             throw new InvalidTransactionException("Transação Invalida");
-
-        return IsValid;
     }
 }

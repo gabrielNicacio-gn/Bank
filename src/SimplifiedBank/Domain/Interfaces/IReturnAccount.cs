@@ -5,5 +5,5 @@ namespace SimplifiedBank.Domain.Interface;
 
 public interface IReturnAccount
 {
-        Task<GetAccountData> GetAccount(int id);
+        GetAccountData GetAccount(int id);
 }

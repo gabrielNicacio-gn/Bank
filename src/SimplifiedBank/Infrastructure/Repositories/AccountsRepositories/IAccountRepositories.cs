@@ -8,7 +8,7 @@ namespace SimplifiedBank.Infrastructure.Repositories.AccountsRepositories
 {
     public interface IAccountRepositories
     {
-        Task<Account?> GetAccountById(int id);
-        Task<bool> ExistAccount(string email, string password);
+        Account? GetAccountById(int id);
+        bool ExistAccount(string email, string password);
     }
 }

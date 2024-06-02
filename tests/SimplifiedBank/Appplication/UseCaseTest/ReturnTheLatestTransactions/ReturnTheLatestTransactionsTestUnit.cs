@@ -9,8 +9,9 @@ using SimplifiedBank.Application.UseCases;
 using Entities = SimplifiedBank.Domain.Entities;
 using SimplifiedBank.Infrastructure.Repositories.TransactionRepositories;
 using Xunit;
+using SimplifiedBank.Domain.Interfaces;
 
-namespace SimplifiedBank.Appplication.UseCaseTest.ReturnTheLatestTransactions
+namespace SimplifiedBank.Appplication.UseCaseTest.ReturnTheLatestTransactionsTestUnit
 {
     public class ReturnTheLatestTransactionsTestUnit
     {
@@ -34,7 +35,7 @@ namespace SimplifiedBank.Appplication.UseCaseTest.ReturnTheLatestTransactions
             transacitonRepositoriesMock.Setup(tr => tr.GetLatestTransaction(idAccount))
             .ReturnsAsync(transactions.AsEnumerable);
 
-            var returnLatest = new ReturnsTheLatestTransactions(transacitonRepositoriesMock.Object);
+            var returnLatest = new ReturnTheLatestTransactions(transacitonRepositoriesMock.Object);
             var result = await returnLatest.GetList(idAccount);
 
             Assert.Equal(expectedTransactions.Count, result.Count());
