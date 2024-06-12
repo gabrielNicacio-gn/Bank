@@ -5,6 +5,7 @@ using System.Text.Json.Nodes;
 using System.Threading.Tasks;
 using SimplifiedBank.Application.UseCases;
 using SimplifiedBank.Domain.Entities;
+using SimplifiedBank.Interfaces.Exceptions;
 using SimplifiedBank.Services.Interfaces;
 
 namespace SimplifiedBank.Services
@@ -15,7 +16,7 @@ namespace SimplifiedBank.Services
         {
             BaseAddress = new Uri("http://localhost:3000/transaction/validate")
         };
-        public async Task<bool> Authorizer()
+        public async ValueTask Authorizer()
         {
             var response = await http.GetAsync(http.BaseAddress);
             string valueString = string.Empty;
@@ -26,7 +27,9 @@ namespace SimplifiedBank.Services
                 valueString = json["message"].ToString();
             }
             var IsAthorized = valueString.Equals("Autorizado");
-            return IsAthorized;
+
+            if (!IsAthorized)
+                throw new InvalidTransactionException("Transação Invalida");
         }
     }
 }

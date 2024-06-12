@@ -8,6 +8,6 @@ namespace SimplifiedBank.Services.Interfaces
 {
     public interface IServiceExternalTransactionAuthorizer
     {
-        Task<bool> Authorizer();
+        ValueTask Authorizer();
     }
 }

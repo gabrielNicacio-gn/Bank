@@ -16,7 +16,7 @@ namespace SimplifiedBank.Appplication.UseCaseTest.ReturnTheLatestTransactionsTes
     public class ReturnTheLatestTransactionsTestUnit
     {
         [Fact]
-        public async Task ItMustReturnAListOfTheLatestTransactionsForAnAccount()
+        public void ItMustReturnAListOfTheLatestTransactionsForAnAccount()
         {
             var idAccount = 1;
             var transacitonRepositoriesMock = new Mock<ITransactionRepository>();
@@ -33,10 +33,10 @@ namespace SimplifiedBank.Appplication.UseCaseTest.ReturnTheLatestTransactionsTes
             };
 
             transacitonRepositoriesMock.Setup(tr => tr.GetLatestTransaction(idAccount))
-            .ReturnsAsync(transactions.AsEnumerable);
+            .Returns(transactions.AsEnumerable);
 
             var returnLatest = new ReturnTheLatestTransactions(transacitonRepositoriesMock.Object);
-            var result = await returnLatest.GetList(idAccount);
+            var result = returnLatest.GetList(idAccount);
 
             Assert.Equal(expectedTransactions.Count, result.Count());
         }

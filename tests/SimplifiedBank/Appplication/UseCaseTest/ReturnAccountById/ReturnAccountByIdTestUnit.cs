@@ -18,7 +18,7 @@ namespace SimplifiedBank.Appplication.UseCaseTest.ReturnAccountById
     {
         [Theory]
         [InlineData(1)]
-        public async Task MustReturnAnAccountWithTheSpecifiedId(int id)
+        public void MustReturnAnAccountWithTheSpecifiedId(int id)
         {
             var expectedAccountOne = new GetAccountData(1, "User One", 100);
             var expectedAccountTwo = new GetAccountData(2, "User Two", 100);
@@ -27,17 +27,17 @@ namespace SimplifiedBank.Appplication.UseCaseTest.ReturnAccountById
             var AccountRepositoriesMock = new Mock<IAccountRepositories>();
 
             AccountRepositoriesMock.Setup(ac => ac.GetAccountById(id))
-            .ReturnsAsync(AccountOne);
+            .Returns(AccountOne);
 
             var returnAccount = new ReturnAccount(AccountRepositoriesMock.Object);
 
-            var result = await returnAccount.GetAccount(id);
+            var result = returnAccount.GetAccount(id);
 
             Assert.Equal(result, expectedAccountOne);
 
         }
         [Fact]
-        public async Task ShouldReturnAUserNotFoundException()
+        public void ShouldReturnAUserNotFoundException()
         {
             var exceptionExpected = new UserNotFoundException("Conta(s) não encontrada(s)");
             var ReturnAccountMock = new Mock<IReturnAccount>();
@@ -45,9 +45,9 @@ namespace SimplifiedBank.Appplication.UseCaseTest.ReturnAccountById
             ReturnAccountMock.Setup(re => re.GetAccount(It.IsAny<int>()))
             .Returns(() => throw new UserNotFoundException("Conta(s) não encontrada(s)"));
 
-            var exception = async () => await ReturnAccountMock.Object.GetAccount(It.IsAny<int>());
+            var exception = () => ReturnAccountMock.Object.GetAccount(It.IsAny<int>());
 
-            var result = await Assert.ThrowsAsync<UserNotFoundException>(exception);
+            var result = Assert.Throws<UserNotFoundException>(exception);
 
             Assert.Equal(exceptionExpected.Message, result.Message);
 

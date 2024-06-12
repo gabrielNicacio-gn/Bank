@@ -2,12 +2,10 @@
 using Dtos = SimplifiedBank.Application.DTOs;
 using Repositories = SimplifiedBank.Infrastructure.Repositories;
 using Entities = SimplifiedBank.Domain.Entities;
-using UseCase = SimplifiedBank.Application.UseCases;
 using Xunit;
 using Moq;
 using SimplifiedBank.Domain.Entities;
 using SimplifiedBank.Services.Interfaces;
-using SimplifiedBank.Interfaces.Exceptions;
 using SimplifiedBank.Application.Services;
 using SimplifiedBank.Application.UseCases;
 
@@ -21,7 +19,7 @@ namespace SimpliffiedBankTest.Appplication.UseCaseTest.CreateTransactionTest
         [InlineData(1, 2, 50)]
         [InlineData(1, 2, 100)]
         [InlineData(1, 2, 150)]
-        public async Task CreatesTransactionSucessAndReturnsResponseDataForTransactionCreation(int idSender, int idReceiver, decimal value)
+        public void CreatesTransactionSucessAndReturnsResponseDataForTransactionCreation(int idSender, int idReceiver, decimal value)
         {
             var newTransaction = new Dtos::Request.TransactionCreationData(idSender, idReceiver, value);
 
@@ -37,12 +35,12 @@ namespace SimpliffiedBankTest.Appplication.UseCaseTest.CreateTransactionTest
             // When
             transactionRepositoriesMock.Setup(tc => tc.CreateTransaction(It.IsAny<Entities::Transaction>()));
             validationTransaciton.Setup(vl => vl.ValidateTransaction(newTransaction));
-            externalAuthorizerMock.Setup(auth => auth.Authorizer()).ReturnsAsync(true);
+            externalAuthorizerMock.Setup(auth => auth.Authorizer());
 
             var CreateTransaction = new CreateTransaction(transactionRepositoriesMock.Object,
             externalAuthorizerMock.Object, validationTransaciton.Object);
 
-            var result = await CreateTransaction.Create(newTransaction);
+            var result = CreateTransaction.Create(newTransaction);
 
             Assert.Equal(expectedTransaction, result);
         }

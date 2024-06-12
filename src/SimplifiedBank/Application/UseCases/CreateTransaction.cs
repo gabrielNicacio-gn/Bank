@@ -24,7 +24,7 @@ public class CreateTransaction : ICreateTransaction
     public DataDTOs::Response.ResponseDataForTransactionCreation Create(DataDTOs::Request.TransactionCreationData data)
     {
         _transactionServices.ValidateTransaction(data);
-        ValidateExternal();
+        _externalAuthorizer.Authorizer();
         var newTransaction = new Entities::Transaction(data.Value, data.IdSender, data.IdReceiver);
         _transactionRepository.CreateTransaction(newTransaction);
 
@@ -32,12 +32,5 @@ public class CreateTransaction : ICreateTransaction
         return newTransactionResult;
         //Notification 
 
-    }
-    private void ValidateExternal()
-    {
-        var IsValid = _externalAuthorizer.Authorizer().Result;
-
-        if (!IsValid)
-            throw new InvalidTransactionException("Transação Invalida");
     }
 }
