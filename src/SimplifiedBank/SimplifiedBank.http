@@ -1,6 +1,0 @@
-@SimplifiedBank_HostAddress = http://localhost:5024
-
-GET {{SimplifiedBank_HostAddress}}/weatherforecast/
-Accept: application/json
-
-###
