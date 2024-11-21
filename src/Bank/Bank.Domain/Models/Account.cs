@@ -1,15 +1,22 @@
+using System.ComponentModel.DataAnnotations.Schema;
+
 namespace Bank.Bank.Domain.Models;
 
 public class Account
 {
+    [Column("id_account")]
     public Guid AccountId { get;private set; }
-    public decimal Balance { get; private set; }
+    [Column("number_account")]
+    public int NumberAccount { get;set; }
+    [Column("balance")]
+    public decimal Balance { get; set; }
+    [Column("user_id")]
     public Guid UserId { get; set; }
     public User? User { get; set; }
 
-    public Account(decimal balance)
+    public Account()
     {
         AccountId = Guid.NewGuid();
-        Balance = balance;
+        NumberAccount = DateTime.UtcNow.Hour + new Random().Next(1000, 100000);
     }
 }

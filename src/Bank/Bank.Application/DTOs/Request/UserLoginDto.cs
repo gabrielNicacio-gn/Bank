@@ -2,7 +2,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace Bank.Bank.Application.DTOs.Request;
 
-public class UserRegister
+public class UserLoginDto
 {
     [Required(ErrorMessage = "Email is required")]
     [EmailAddress(ErrorMessage = "Invalid email address")]
@@ -10,10 +10,8 @@ public class UserRegister
     
     [Required(ErrorMessage = "Password is required")]
     [MinLength(8, ErrorMessage = "Password must be at least 8 characters long")]
-    [RegularExpression(@"^(?=.*[a-z])(?=.*[A-Z])(?=.*[\d])(?=.*[@%#$*^]).+$")]
+    [MaxLength(30, ErrorMessage = "Password must be between 8 and 30 characters")]
+    [RegularExpression(@"^(?=.*[a-z])(?=.*[A-Z])(?=.*[\d])(?=.*[@%#$*^{}&]).+$"
+        ,ErrorMessage = "Password does no meet requirements")]
     public string Password { get; set; } = string.Empty;    
-    
-    [Required(ErrorMessage = "Document is required")]
-    [RegularExpression(@"^[\d{3}]\.[\d{3}]\.[\d{3}]\-\d{2}$")]
-    public string Document { get; set; } = string.Empty;
 }

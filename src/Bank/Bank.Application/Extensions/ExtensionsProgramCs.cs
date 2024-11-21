@@ -11,5 +11,8 @@ public static class ExtensionsProgramCs
         builder.Services.AddDbContext<BankContext>();
         builder.Services.AddScoped<IUserServices,UserServices>();
         builder.Services.AddScoped<ITokenService, TokenService>();
+        builder.Services.AddScoped<IAccountServices, AccountServices>();
+        builder.Services.AddScoped<ITransactionServices, TransactionServices>();
+        builder.Services.AddTransient<IHttpContextAccessor, HttpContextAccessor>();
     }
 }
