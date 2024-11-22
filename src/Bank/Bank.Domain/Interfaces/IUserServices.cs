@@ -5,7 +5,7 @@ namespace Bank.Bank.Domain.Interfaces;
 
 public interface IUserServices
 {
-    Task<DefaultResponse<UserResponse>> RegisterAccount(UserRegisterDto model);
-    Task<DefaultResponse<UserResponse>> AccountLogin(UserLoginDto model);
-    Task<DefaultResponse<UserResponse>> Logout();
+    Task<UserResponse> RegisterUserAndAccount(UserRegisterDto model);
+    Task<UserResponse> AccountLogin(UserLoginDto model);
+    Task<UserResponse> Logout();
 }

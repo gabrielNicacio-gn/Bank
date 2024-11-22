@@ -6,6 +6,6 @@ namespace Bank.Bank.Domain.Interfaces;
 
 public interface IAccountServices
 {
-    Task<DefaultResponse<AccountResponse>> GetAccount();
-    Task<DefaultResponse<AccountResponse>> AddBalance(AddBalanceDto addBalance);
+    Task<AccountResponse> GetAccount();
+    Task<AccountResponse> AddBalance(AddBalanceDto addBalance);
 }

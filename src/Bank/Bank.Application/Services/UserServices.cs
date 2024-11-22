@@ -1,5 +1,6 @@
 using Bank.Bank.Application.DTOs.Request;
 using Bank.Bank.Application.DTOs.Response;
+using Bank.Bank.Application.Exceptions;
 using Bank.Bank.Domain.Interfaces;
 using Bank.Bank.Domain.Models;
 using Bank.Bank.Infrastructure.Data;
@@ -21,7 +22,7 @@ public class UserServices : IUserServices
         _userManager = userManager;
         _tokenService = tokenService;
     }
-    public async Task<DefaultResponse<UserResponse>> RegisterAccount(UserRegisterDto model)     
+    public async Task<UserResponse> RegisterUserAndAccount(UserRegisterDto model)     
     {
         var identityUser = new User()
         {
@@ -32,36 +33,36 @@ public class UserServices : IUserServices
         };
         var passwordHasher = new PasswordHasher<User>();
         var hash = passwordHasher.HashPassword(identityUser, model.Password);
-        identityUser.PasswordHash = hash;
+        identityUser.PasswordHash = hash;   
         Console.WriteLine($"{_userManager}");
         var result = await _userManager.CreateAsync(identityUser);
-        if (result.Succeeded)
+        if (!result.Succeeded)
         {
-            var account = new Account() {UserId = identityUser.Id };
-            _context.Accounts.Add(account);
-            await _context.SaveChangesAsync();
-
-            await _userManager.SetLockoutEnabledAsync(identityUser, false);
-            var data = new UserResponse() {IdUser = identityUser.Id};
-            return new DefaultResponse<UserResponse>(data);
+            var errors = result.Errors.Select(e => e.Code == "DuplicateUserName");
+            throw new DuplicateUserNameException(string.Join(Environment.NewLine, errors));
         }
-        return new DefaultResponse<UserResponse>("Failed to create account");
+        var account = new Account() {UserId = identityUser.Id };
+        _context.Accounts.Add(account);
+        await _context.SaveChangesAsync();
+        await _userManager.SetLockoutEnabledAsync(identityUser, false);
+        return new UserResponse() {IdUser = identityUser.Id};
     }
-    public async Task<DefaultResponse<UserResponse>> AccountLogin(UserLoginDto model)
+    public async Task<UserResponse> AccountLogin(UserLoginDto model)
     {
-        var userExist = await _userManager.FindByEmailAsync(model.Email) ?? throw new Exception();
+        var userExist = await _userManager.FindByEmailAsync(model.Email) 
+                        ?? throw new IncorrectEmailOrPasswordException("Email or password is incorrect");
         if(await _userManager.CheckPasswordAsync(userExist,model.Password))
         {
-           var token= _tokenService.GenerateToken(userExist);
-           await _signIn.SignInAsync(userExist,false,token);
-           return new DefaultResponse<UserResponse>(new UserResponse());
+            var token= _tokenService.GenerateToken(userExist);
+            await _signIn.SignInAsync(userExist,false,token);
+            return new UserResponse();
         }
-        return new DefaultResponse<UserResponse>("Fail to login");
+        throw new IncorrectEmailOrPasswordException("Email or password is incorrect");
     }
 
-    public async Task<DefaultResponse<UserResponse>> Logout()
+    public async Task<UserResponse> Logout()
     {
         await _signIn.SignOutAsync();
-        return new DefaultResponse<UserResponse>(new UserResponse());
+        return new UserResponse();
     }
 }

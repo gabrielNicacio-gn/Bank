@@ -1,10 +1,12 @@
 using System.Security.Claims;
 using Bank.Bank.Application.DTOs.Request;
 using Bank.Bank.Application.DTOs.Response;
+using Bank.Bank.Application.Exceptions;
 using Bank.Bank.Domain.Interfaces;
 using Bank.Bank.Domain.Models;
 using Bank.Bank.Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
+using Npgsql;
 
 namespace Bank.Bank.Application.Services;
 public class AccountServices : IAccountServices
@@ -16,37 +18,30 @@ public class AccountServices : IAccountServices
         _httpContextAccessor = httpContextAccessor;
         _context = context;
     }
-    public async Task<DefaultResponse<AccountResponse>> GetAccount()
+    public async Task<AccountResponse> GetAccount()
     {
         var user = _httpContextAccessor.HttpContext!.User;
         var userId = user.FindFirstValue(ClaimTypes.NameIdentifier)
-                     ?? throw new Exception();
+                     ?? throw new AccountNotExistException("User is not authenticated");
         var account = await _context.Accounts
             .FirstOrDefaultAsync(a=>a.UserId==Guid.Parse(userId))
             ?? new Account();
-        var data = new AccountResponse()
+       return new AccountResponse()
             { Balance = account.Balance, IdAccount = account.AccountId, NumberAccount = account.NumberAccount };
-        return new DefaultResponse<AccountResponse>(data);
     }
-    public async Task<DefaultResponse<AccountResponse>> AddBalance(AddBalanceDto addBalance)
+    public async Task<AccountResponse> AddBalance(AddBalanceDto addBalance)
     {
         var user = _httpContextAccessor.HttpContext!.User;
         var userId = user.FindFirstValue(ClaimTypes.NameIdentifier)
-                     ?? throw new Exception();
-        using (var transaction = _context.Database.BeginTransaction())
-        {
+                     ?? throw new AccountNotExistException("User is not authenticated");
             var count=await _context.Accounts
                 .Where(a=>a.UserId==Guid.Parse(userId))
                 .ExecuteUpdateAsync(a=>a
                     .SetProperty(account=>account.Balance, account=>account.Balance + addBalance.Value));
             if (count > 0)
             {
-                await transaction.CommitAsync();
-                var account = new AccountResponse() { Balance = addBalance.Value, };
-                return new DefaultResponse<AccountResponse>(account,"Value deposited with success");
+                return new AccountResponse() { Balance = addBalance.Value, };
             }
-            await transaction.RollbackAsync();
-            return new DefaultResponse<AccountResponse>("Fail to deposited");
-        }
+            throw new NpgsqlException();
     }
 }
