@@ -9,7 +9,7 @@ namespace Bank.Bank.Domain.Interfaces
 {
     public interface ITransactionServices
     {
-        Task<TrancsactionResponse> CreateTransaction(CreateNewTransactionDto transactionDto);
-        Task<IEnumerable<TrancsactionResponse>> GetLatestTransactions();
+        Task<TransactionResponse> CreateTransaction(CreateNewTransactionDto transactionDto);
+        Task<IEnumerable<TransactionResponse>> GetLatestTransactions();
     }
 }

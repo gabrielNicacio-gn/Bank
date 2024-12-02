@@ -1,12 +1,3 @@
-CREATE UNLOGGED TABLE accounts(
-        id SERIAL PRIMARY KEY,
-        fullname VARCHAR(100) NOT NULL,
-        email VARCHAR(50) NOT NULL,
-        cpf VARCHAR(11) NOT NULL,
-        balance DECIMAL NOT NULL,
-        password VARCHAR(20) NOT NULL,
-        UNIQUE(cpf,email)
-);
 
 CREATE UNLOGGED TABLE transactions(
         id SERIAL PRIMARY KEY,

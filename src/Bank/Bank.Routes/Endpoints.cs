@@ -14,7 +14,7 @@ namespace Bank.Bank.Routes
     {
         public static void MapEndpoints(this WebApplication app)
         {
-            app.MapGet("/test",()=>"Hello World").RequireAuthorization();
+            app.MapGet("/test",()=>"Hello World");
             
             var userEndpoints = app.MapGroup("/user").WithTags("User");
             userEndpoints.MapPost("/register",
@@ -95,6 +95,11 @@ namespace Bank.Bank.Routes
                 {
                     return Results.BadRequest(transactionBetweenAccountsFailsException.Message);
                 }
+            }).RequireAuthorization();
+            transactionEndpoints.MapGet("/transactions", async ([FromServices]ITransactionServices transactionServices) =>
+            {
+                    var transactions = await transactionServices.GetLatestTransactions();
+                    return Results.Ok(transactions);
             }).RequireAuthorization();
         }
     }

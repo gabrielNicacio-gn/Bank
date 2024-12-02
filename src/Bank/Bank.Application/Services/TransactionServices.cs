@@ -21,7 +21,7 @@ namespace Bank.Bank.Application.Services;
             _context = context;
             _accountServices = accountServices;
         }
-        public async Task<TrancsactionResponse> CreateTransaction(CreateNewTransactionDto transactionDto)
+        public async Task<TransactionResponse> CreateTransaction(CreateNewTransactionDto transactionDto)
         {
             using (var transaction = _context.Database.BeginTransaction())
             {
@@ -39,21 +39,13 @@ namespace Bank.Bank.Application.Services;
                     Value = transactionDto.Value
                 };
                 _context.Transactions.Add(newTransaction);
-                var countSender = await _context.Accounts
-                    .Where(a => a.AccountId == accountSender.IdAccount)
-                    .ExecuteUpdateAsync(a =>
-                        a.SetProperty(account => account.Balance,
-                            account => account.Balance - transactionDto.Value));
-                var countReceiver = await _context.Accounts
-                    .Where(a => a.AccountId == accountReceiver.AccountId)
-                    .ExecuteUpdateAsync(a =>
-                        a.SetProperty(account => account.Balance,
-                            account => account.Balance + transactionDto.Value));
-                if (countSender > 0 && countReceiver > 0)
+                var updatedBalance = await UpdateBalanceAccount
+                    (accountSender.IdAccount,accountReceiver.AccountId ,transactionDto.Value);
+                if (updatedBalance)
                 {
                     transaction.Commit();
                     await _context.SaveChangesAsync();
-                    return new TrancsactionResponse()
+                    return new TransactionResponse()
                     { 
                         IdTransaction = newTransaction.Id,
                         IdSender = accountSender.IdAccount,
@@ -67,8 +59,30 @@ namespace Bank.Bank.Application.Services;
             }
         }
 
-        public Task<IEnumerable<TrancsactionResponse>> GetLatestTransactions()
+        public async Task<IEnumerable<TransactionResponse>> GetLatestTransactions()
         {
-            throw new NotImplementedException();
+            var accountSender = await _accountServices.GetAccount();
+            var allLatestTransactions = await _context.Transactions
+                .Where(a => a.IdSender == accountSender.IdAccount || a.IdReceiver == accountSender.IdAccount)
+                .OrderByDescending(a => a.HourOfTransaction)
+                .Select(a=> new TransactionResponse()
+                    {IdReceiver = a.IdReceiver,IdSender = a.IdSender,IdTransaction = a.Id,Value=a.Value,TimeStamp = a.HourOfTransaction})
+                .ToListAsync();
+            return allLatestTransactions.AsEnumerable();
+        }
+
+        private async Task<bool> UpdateBalanceAccount(Guid senderAccountId, Guid receiverAccountId, decimal amount)
+        {
+            var countSender = await _context.Accounts
+                .Where(a => a.AccountId == senderAccountId)
+                .ExecuteUpdateAsync(a =>
+                    a.SetProperty(account => account.Balance,
+                        account => account.Balance - amount));
+            var countReceiver = await _context.Accounts
+                .Where(a => a.AccountId == receiverAccountId)
+                .ExecuteUpdateAsync(a =>
+                    a.SetProperty(account => account.Balance,
+                        account => account.Balance + amount));
+            return countSender > 0 && countReceiver > 0;
         }
     }

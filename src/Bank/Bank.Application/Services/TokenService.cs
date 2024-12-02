@@ -13,28 +13,25 @@ public class TokenService : ITokenService
 {
     public string GenerateToken(User user)
     {
-        var configuration = new ConfigurationBuilder()
-            .SetBasePath(Directory.GetCurrentDirectory())
-            .AddJsonFile("appsettings.Development.json")
-            .Build();
-        var secretKey = Encoding.ASCII.GetBytes(configuration.GetValue<string>("JWT:SecretKey")!);
+        var secretSigningKey = Encoding.ASCII.GetBytes
+            (ConfigurationAppSettingsJson().GetValue<string>("JWT:SecretKey")!);
             
         var jwtHandler = new JwtSecurityTokenHandler();
         
-        var credentials = new SigningCredentials(new SymmetricSecurityKey(secretKey)
+        var credentials = new SigningCredentials(new SymmetricSecurityKey(secretSigningKey)
             ,SecurityAlgorithms.HmacSha256Signature);
         var tokenDescription = new SecurityTokenDescriptor()
         {
             Subject = GenerateClaims(user),
             SigningCredentials = credentials,
             Expires = DateTime.UtcNow.AddHours(2),
-            Issuer = configuration.GetValue<string>("JWT:Issuer"),
+            Issuer = ConfigurationAppSettingsJson().GetValue<string>("JWT:Issuer") ,
             IssuedAt = DateTime.UtcNow
         };
         var newToken = jwtHandler.CreateToken(tokenDescription);
         
-        var tokenString = jwtHandler.WriteToken(newToken);
-        return tokenString;
+        var encodedToken = jwtHandler.WriteToken(newToken);
+        return encodedToken;
     }
     
     private static ClaimsIdentity GenerateClaims(User user)
@@ -42,5 +39,13 @@ public class TokenService : ITokenService
         var claims = new ClaimsIdentity();
         claims.AddClaim(new Claim(ClaimTypes.Name,user.Id.ToString()));
         return claims;
+    }
+    private static IConfigurationRoot ConfigurationAppSettingsJson()
+    {
+        var configuration = new ConfigurationBuilder()
+            .SetBasePath(Directory.GetCurrentDirectory())
+            .AddJsonFile("appsettings.Development.json")
+            .Build();
+        return configuration;
     }
 }

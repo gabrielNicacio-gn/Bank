@@ -1,6 +1,6 @@
 namespace Bank.Bank.Application.DTOs.Response;
 
-public class TrancsactionResponse
+public class TransactionResponse
 {
     public Guid IdTransaction { get; set; }
     public decimal Value{ get; set; }

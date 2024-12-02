@@ -20,28 +20,35 @@ public class AccountServices : IAccountServices
     }
     public async Task<AccountResponse> GetAccount()
     {
-        var user = _httpContextAccessor.HttpContext!.User;
-        var userId = user.FindFirstValue(ClaimTypes.NameIdentifier)
-                     ?? throw new AccountNotExistException("User is not authenticated");
+        var userId = GetUserIdFromToken();
+        
         var account = await _context.Accounts
-            .FirstOrDefaultAsync(a=>a.UserId==Guid.Parse(userId))
+            .FirstOrDefaultAsync(a=>a.UserId==userId)
             ?? new Account();
        return new AccountResponse()
             { Balance = account.Balance, IdAccount = account.AccountId, NumberAccount = account.NumberAccount };
     }
     public async Task<AccountResponse> AddBalance(AddBalanceDto addBalance)
     {
+        var userId = GetUserIdFromToken();
+        
+        var updateRowCount =await _context.Accounts
+            .Where(a=>a.UserId==userId)
+            .ExecuteUpdateAsync(a=>a
+                .SetProperty(account=>account.Balance, account=>account.Balance + addBalance.Value));
+        if (updateRowCount > 0)
+        {
+            return new AccountResponse() { Balance = addBalance.Value, };
+        }
+        throw new NpgsqlException();
+    }
+
+    private Guid GetUserIdFromToken()
+    {
+        // Fetches user ID from token stored in cookie
         var user = _httpContextAccessor.HttpContext!.User;
         var userId = user.FindFirstValue(ClaimTypes.NameIdentifier)
                      ?? throw new AccountNotExistException("User is not authenticated");
-            var count=await _context.Accounts
-                .Where(a=>a.UserId==Guid.Parse(userId))
-                .ExecuteUpdateAsync(a=>a
-                    .SetProperty(account=>account.Balance, account=>account.Balance + addBalance.Value));
-            if (count > 0)
-            {
-                return new AccountResponse() { Balance = addBalance.Value, };
-            }
-            throw new NpgsqlException();
+        return Guid.Parse(userId);
     }
 }

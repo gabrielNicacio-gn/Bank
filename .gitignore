@@ -1,9 +1,86 @@
-# Ignore build output directories
+# Compiled object files
+*.o
+*.obj
+*.exe
+*.dll
+*.pdb
+*.test.dll
+*.app
+*.out
+*.iobj
+*.so
+*.idb
+*.psess
+*.vspx
+*.vshost.exe
+*.vshost.exe.manifest
+*.tlog
+*.log
+
+# Directory for package manager dependencies
+node_modules/
+npm-debug.log
+yarn-error.log
+
+# Visual Studio related directories and files
+.vscode/
+.vs/
+*.suo
+*.user
+*.userossc
+*.sln.docstates
+
+# Build directories
 bin/
 obj/
 
-# Ignore test build output (same as above)
-tests/bin/
-tests/obj/
+# NuGet related files
+*.nupkg
+project.lock.json
+project.fragment.lock.json
+artifacts/
+.nuget/
 
-.vscode
+# ASP.NET Scaffolding
+ScaffoldingReadMe.txt
+
+# Blazor WebAssembly specific files
+wwwroot/css/app.css
+wwwroot/css/app.css.map
+wwwroot/css/bootstrap/
+
+# .NET generated files
+*.log
+*.cache/
+*.ide/
+
+# Generated documentation files
+*.xml
+*.xsd
+*.xsx
+*.xss
+
+# Database files
+*.mdf
+*.ldf
+*.sdf
+
+# SQL Server files
+.sql/
+
+# OS generated files
+.DS_Store
+Thumbs.db
+
+# Docker files
+docker-compose.override.yml
+docker-compose.yml
+.dockerignore
+
+# Environment variable files
+*.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
