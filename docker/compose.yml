@@ -17,10 +17,10 @@ services:
     networks:
       - bankSimplified
   
-  bank_api:
-    &api
+  bank_api_01:
+    &bank_api
     build: ../
-    hostname: bank_api
+    hostname: bank_api_01
     ports:
       - "8081:8080"
     depends_on:
@@ -28,6 +28,13 @@ services:
     networks:
       - bankSimplified
       
+  bank_api_02:
+    <<: *bank_api
+    hostname: bank_api_02
+    ports:
+      - "8082:8080"
+  
+
       
  
       

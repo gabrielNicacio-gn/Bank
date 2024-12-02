@@ -16,11 +16,5 @@
     <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="8.0.10" />
     <PackageReference Include="Swashbuckle.AspNetCore" Version="6.9.0" />
   </ItemGroup>
-
-  <ItemGroup>
-    <Compile Remove="Bank.Domain\Identity\IAccountServices.cs" />
-    <Compile Remove="Bank.Domain\Interfaces\ISignInManager.cs" />
-    <Compile Remove="Bank.Domain\Interfaces\IUserManager.cs" />
-  </ItemGroup>
-
+  
 </Project>

@@ -2,16 +2,16 @@
 FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build-env
 WORKDIR /App
 
-COPY src/Bank /App/src
-COPY src/Bank/Bank.csproj /App
+COPY src/Bank/Bank.csproj ./
 RUN dotnet restore      
 
-WORKDIR /App
-RUN dotnet publish -c Release -o bank
+COPY src/Bank ./ 
+RUN dotnet publish -c Release -o out
 
 FROM mcr.microsoft.com/dotnet/aspnet:8.0
+WORKDIR /App
 
-COPY --from=build-env /App/bank .
+COPY --from=build-env /App/out .
 EXPOSE 8080
-#ENTRYPOINT ["dotnet", "Bank.dll"]
-CMD ["dotnet","run","Bank.dll"]
+EXPOSE 8081
+ENTRYPOINT ["dotnet", "Bank.dll"]
