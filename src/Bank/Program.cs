@@ -1,3 +1,4 @@
+using System.Net;
 using System.Security.Claims;
 using System.Text;
 using Bank.Bank.Application.Extensions;
@@ -33,6 +34,10 @@ builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationSc
         options.LoginPath = "/Account/Login";
         options.Cookie.SameSite = SameSiteMode.Strict;
     });
+builder.WebHost.ConfigureKestrel(options =>
+{
+    options.Limits.MaxConcurrentConnections = 200;
+});
 builder.Services.AddAuthorization();
 builder.Services
     .AddIdentity<User,IdentityRole<Guid>>()

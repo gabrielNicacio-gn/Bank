@@ -28,7 +28,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="ApplicationTests\ServicesTest\" />
+    <Folder Include="UnitTests\" />
   </ItemGroup>
 
 </Project>

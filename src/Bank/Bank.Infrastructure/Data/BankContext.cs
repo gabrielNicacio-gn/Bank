@@ -33,7 +33,6 @@ namespace Bank.Bank.Infrastructure.Data;
                 .HasForeignKey<Account>(a => a.UserId);
             
             builder.Entity<Account>().HasKey(a=>a.AccountId);
-            
             base.OnModelCreating(builder);
         }
     }
