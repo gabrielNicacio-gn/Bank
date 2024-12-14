@@ -4,6 +4,7 @@ using Bank.Bank.Application.Exceptions;
 using Bank.Bank.Domain.Interfaces;
 using Bank.Bank.Domain.Models;
 using Bank.Bank.Infrastructure.Data;
+using Bank.Bank.Infrastructure.Interfaces;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Identity;
 
@@ -13,11 +14,11 @@ namespace Bank.Bank.Application.Services;
         private readonly SignInManager<User> _signIn;
         private readonly UserManager<User> _userManager;
         private readonly ITokenService _tokenService;
-        private readonly BankContext _context;
+        private readonly IAccountRepository _accountRepository;
         public UserServices(SignInManager<User> signIn,UserManager<User> userManager    
-            ,ITokenService tokenService,BankContext context)
+            ,ITokenService tokenService,IAccountRepository accountRepository)
         {
-            _context = context;
+            _accountRepository = accountRepository;
             _signIn = signIn;
             _userManager = userManager;
             _tokenService = tokenService;
@@ -43,8 +44,7 @@ namespace Bank.Bank.Application.Services;
             }
             
             var account = new Account() {UserId = identityUser.Id };
-            _context.Accounts.Add(account);
-            await _context.SaveChangesAsync();
+            await _accountRepository.CreateAccount(account);
             
             await _userManager.SetLockoutEnabledAsync(identityUser, false);
             return new UserResponse() {IdUser = identityUser.Id};

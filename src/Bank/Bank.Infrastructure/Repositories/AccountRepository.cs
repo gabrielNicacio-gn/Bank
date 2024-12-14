@@ -35,4 +35,9 @@ public class AccountRepository : IAccountRepository
                 .SetProperty(account=>account.Balance, account=>account.Balance + value));
         return updateRowCount;
     }
+    public async Task CreateAccount(Account account)
+    {
+        _context.Accounts.Add(account);
+        await _context.SaveChangesAsync();
+    }
 }
