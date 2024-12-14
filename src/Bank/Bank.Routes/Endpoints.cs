@@ -49,11 +49,12 @@ namespace Bank.Bank.Routes
             });
             
             var accountEndpoints = app.MapGroup("/").WithTags("Account");
-            accountEndpoints.MapGet("/accounts", async ([FromServices] IAccountServices accountService) =>
+            accountEndpoints.MapGet("/accounts", async ([FromServices] IAccountServices accountService,[FromServices]ITokenService tokenService) =>
             {
                 try
                 {
-                    var result = await accountService.GetAccount();
+                    var userId = tokenService.GetUserIdFromToken();
+                    var result = await accountService.GetAccount(userId);
                     return Results.Ok(result);
                 }
                 catch (AccountNotExistException userNotExistException)
@@ -61,26 +62,32 @@ namespace Bank.Bank.Routes
                     return Results.NotFound(userNotExistException.Message);
                 }
             }).RequireAuthorization();
-            accountEndpoints.MapPost("/account", async ([FromServices]IAccountServices accountService,[FromBody]AddBalanceDto balance) 
+            accountEndpoints.MapPost("/account", async ([FromServices]IAccountServices accountService, [FromServices]ITokenService tokenService,[FromBody]AddBalanceDto balance) 
                 =>
             {
                 try
                 {
-                    var addBalance = await accountService.AddBalance(balance);
+                    var userIdCurrent = tokenService.GetUserIdFromToken();
+                    var addBalance = await accountService.AddBalance(balance, userIdCurrent);
                     return Results.Ok(addBalance);
                 }
                 catch (AccountNotExistException userNotExistException)
                 {
                     return Results.NotFound(userNotExistException.Message);
                 }
+                catch (FailUpdateBalanceException failUpdateBalanceException)
+                {
+                    return Results.BadRequest(failUpdateBalanceException.Message);
+                }
             }).RequireAuthorization();
             
             var transactionEndpoints = app.MapGroup("/").WithTags("Transaction");
-            transactionEndpoints.MapPost("/transaction", async ([FromServices]ITransactionServices transactionServices,[FromBody] CreateNewTransactionDto dto) =>
+            transactionEndpoints.MapPost("/transaction", async ([FromServices]ITransactionServices transactionServices,[FromServices]ITokenService tokenService,[FromBody] CreateNewTransactionDto dto) =>
             {
                 try
                 {
-                    var transaction = await transactionServices.CreateTransaction(dto);
+                    var userIdCurrent = tokenService.GetUserIdFromToken();
+                    var transaction = await transactionServices.CreateNewTransaction(dto,userIdCurrent);
                     return Results.Created($"/transaction/{transaction.IdTransaction}", transaction);
                 }
                 catch (InsufficientBalanceException insufficientBalanceException)
@@ -96,9 +103,10 @@ namespace Bank.Bank.Routes
                     return Results.BadRequest(transactionBetweenAccountsFailsException.Message);
                 }
             }).RequireAuthorization();
-            transactionEndpoints.MapGet("/transactions", async ([FromServices]ITransactionServices transactionServices) =>
+            transactionEndpoints.MapGet("/transactions", async ([FromServices]ITransactionServices transactionServices,[FromServices]ITokenService tokenService) =>
             {
-                    var transactions = await transactionServices.GetLatestTransactions();
+                    var userIdCurrent = tokenService.GetUserIdFromToken();
+                    var transactions = await transactionServices.GetLatestTransactions(userIdCurrent);
                     return Results.Ok(transactions);
             }).RequireAuthorization();
         }

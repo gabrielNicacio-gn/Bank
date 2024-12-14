@@ -6,6 +6,7 @@ public class Account
 {
     [Column("id_account")]
     public Guid AccountId { get;private set; }
+    
     [Column("number_account")]
     public int NumberAccount { get;set; }
     [Column("balance")]

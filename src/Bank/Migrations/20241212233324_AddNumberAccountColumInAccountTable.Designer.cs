@@ -12,8 +12,8 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Bank.Migrations
 {
     [DbContext(typeof(BankContext))]
-    [Migration("20241120185651_AddColumInAccountRelation")]
-    partial class AddColumInAccountRelation
+    [Migration("20241212233324_AddNumberAccountColumInAccountTable")]
+    partial class AddNumberAccountColumInAccountTable
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)

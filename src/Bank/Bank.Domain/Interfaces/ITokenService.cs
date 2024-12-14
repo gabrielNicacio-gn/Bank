@@ -7,4 +7,5 @@ namespace Bank.Bank.Domain.Interfaces;
 public interface ITokenService
 {
     string GenerateToken(User user);
+    Guid GetUserIdFromToken();
 }

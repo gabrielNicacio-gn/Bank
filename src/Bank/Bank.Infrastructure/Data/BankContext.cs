@@ -13,8 +13,8 @@ namespace Bank.Bank.Infrastructure.Data;
         public BankContext() { }
         public BankContext(DbContextOptions<BankContext> options) : base(options) { }
         
-        public DbSet<Account> Accounts { get; set; }
-        public DbSet<Transaction> Transactions { get; set; }
+        public virtual DbSet<Account> Accounts { get; set; }
+        public virtual DbSet<Transaction> Transactions { get; set; }
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
             var config = new ConfigurationBuilder()

@@ -1,11 +1,12 @@
-﻿using Microsoft.EntityFrameworkCore.Migrations;
+﻿using System;
+using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
 
 namespace Bank.Migrations
 {
     /// <inheritdoc />
-    public partial class AddColumInAccountRelation : Migration
+    public partial class AddNumberAccountColumInAccountTable : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -25,11 +26,6 @@ namespace Bank.Migrations
                 newName: "user_id");
 
             migrationBuilder.RenameColumn(
-                name: "NumberAccount",
-                table: "Accounts",
-                newName: "number_account");
-
-            migrationBuilder.RenameColumn(
                 name: "AccountId",
                 table: "Accounts",
                 newName: "id_account");
@@ -38,6 +34,28 @@ namespace Bank.Migrations
                 name: "IX_Accounts_UserId",
                 table: "Accounts",
                 newName: "IX_Accounts_user_id");
+
+            migrationBuilder.AddColumn<int>(
+                name: "number_account",
+                table: "Accounts",
+                type: "integer",
+                nullable: false,
+                defaultValue: 0);
+
+            migrationBuilder.CreateTable(
+                name: "Transactions",
+                columns: table => new
+                {
+                    id = table.Column<Guid>(type: "uuid", nullable: false),
+                    id_sender = table.Column<Guid>(type: "uuid", nullable: false),
+                    id_receiver = table.Column<Guid>(type: "uuid", nullable: false),
+                    value = table.Column<decimal>(type: "numeric", nullable: false),
+                    date = table.Column<DateTime>(type: "timestamp with time zone", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Transactions", x => x.id);
+                });
 
             migrationBuilder.AddForeignKey(
                 name: "FK_Accounts_AspNetUsers_user_id",
@@ -55,6 +73,13 @@ namespace Bank.Migrations
                 name: "FK_Accounts_AspNetUsers_user_id",
                 table: "Accounts");
 
+            migrationBuilder.DropTable(
+                name: "Transactions");
+
+            migrationBuilder.DropColumn(
+                name: "number_account",
+                table: "Accounts");
+
             migrationBuilder.RenameColumn(
                 name: "balance",
                 table: "Accounts",
@@ -64,11 +89,6 @@ namespace Bank.Migrations
                 name: "user_id",
                 table: "Accounts",
                 newName: "UserId");
-
-            migrationBuilder.RenameColumn(
-                name: "number_account",
-                table: "Accounts",
-                newName: "NumberAccount");
 
             migrationBuilder.RenameColumn(
                 name: "id_account",

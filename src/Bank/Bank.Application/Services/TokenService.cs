@@ -3,6 +3,7 @@ using Bank.Bank.Domain.Interfaces;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
+using Bank.Bank.Application.Exceptions;
 using Bank.Bank.Domain.Models;
 using Microsoft.AspNetCore.Authentication.OAuth.Claims;
 using Microsoft.IdentityModel.Tokens;
@@ -11,6 +12,11 @@ namespace Bank.Bank.Application.Services;
 
 public class TokenService : ITokenService
 {
+    private readonly IHttpContextAccessor _httpAccessor;
+    public TokenService(IHttpContextAccessor httpAccessor)
+    {
+        _httpAccessor = httpAccessor;
+    }
     public string GenerateToken(User user)
     {
         var secretSigningKey = Encoding.ASCII.GetBytes
@@ -47,5 +53,13 @@ public class TokenService : ITokenService
             .AddJsonFile("appsettings.Development.json")
             .Build();
         return configuration;
+    }
+    public Guid GetUserIdFromToken()
+    {
+        // Fetches user ID from token stored in cookie
+        var user = _httpAccessor.HttpContext!.User;
+        var userId = user.FindFirstValue(ClaimTypes.NameIdentifier)
+                     ?? throw new AccountNotExistException("User is not authenticated");
+        return Guid.Parse(userId);
     }
 }
